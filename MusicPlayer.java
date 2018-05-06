@@ -23,10 +23,10 @@ public class MusicPlayer {
 	/**
 	 * Constructor -> Extracts the songName from the Item object and creates the AudioInputStream
 	 */
-	public MusicPlayer(Item x) {
+	public MusicPlayer(ItemSong x) {
 		
 		try {
-			File file = new File(x.getFileName());   //Create the File object that holds the path to the file
+			File file = new File(x.getSongFilePath());   //Create the File object that holds the path to the file
 			songFile = AudioSystem.getAudioInputStream(file.getAbsoluteFile()); //Set the "private songFile" so it can be used later in the program. AudioSystem returns a AudioInputStream object
 			}
 			catch(Exception e) {
@@ -103,24 +103,24 @@ public class MusicPlayer {
 		return (int) song.getMicrosecondLength()/1000000;
 	}
 	
-	public static void main(String[] args) {
-		
-		MusicPlayer test = new MusicPlayer("Bamse.wav");
-		test.play();
-		
-		Scanner scanner = new Scanner(System.in);
-		
-		scanner.next();
-		test.pause();
-		
-		scanner.next();
-		System.out.println(test.getCurrentPos());
-		System.out.println(test.getSongLength());
-		
-		scanner.next();
-		
-		scanner.close();
-	}
+//	public static void main(String[] args) {
+//		
+//		MusicPlayer test = new MusicPlayer("Bamse.wav");
+//		test.play();
+//		
+//		Scanner scanner = new Scanner(System.in);
+//		
+//		scanner.next();
+//		test.pause();
+//		
+//		scanner.next();
+//		System.out.println(test.getCurrentPos());
+//		System.out.println(test.getSongLength());
+//		
+//		scanner.next();
+//		
+//		scanner.close();
+//	}
 	
 }
 
