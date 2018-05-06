@@ -16,17 +16,17 @@ public class MusicPlayer {
 
 	private AudioInputStream songFile;
 	private Clip song;
-	private long currentPos;
 	private File file;
+	private boolean playPush;
+	
 	
 	/**
 	 * Constructor -> Extracts the songName from the Item object and creates the AudioInputStream
 	 */
-	public MusicPlayer(String x) {
+	public MusicPlayer(Item x) {
 		
 		try {
-			//File file = new File(x.getSongFile());   //Create the File object that holds the path to the file
-			file = new File(x);
+			File file = new File(x.getFileName());   //Create the File object that holds the path to the file
 			songFile = AudioSystem.getAudioInputStream(file.getAbsoluteFile()); //Set the "private songFile" so it can be used later in the program. AudioSystem returns a AudioInputStream object
 			}
 			catch(Exception e) {
@@ -40,40 +40,67 @@ public class MusicPlayer {
 	 * @exception Catches all the exceptions and prints them
 	 */
 	public void play() {
-		try {
-			
-			if(currentPos > 0) {
-				
-				song.setMicrosecondPosition(currentPos);
-				song.start();
-
+			if(playPush == true) {
+				resume();
 			}
 			else {
-				song = AudioSystem.getClip();
-				song.open(songFile);
-				song.start();
+				try {
+					song = AudioSystem.getClip();
+					song.open(songFile);
+					//song.setMicrosecondPosition(currentPos);
+					song.start();
+					playPush = true;
+				}
+				catch(Exception e) {
+					System.out.println(e);
+				}
 			}
-		}
-		
-		catch(Exception e) {
-			System.out.println(e);
-		}
+	}
+	
+	public void resume() {
+		song.start();
 	}
 	
 	/**
 	 * Saves the current position and stops the Clip.
 	 */
 	public void pause(){
-		currentPos = song.getMicrosecondPosition();
 		song.stop();
 	}
-	
 	
 	/**
 	 * Stops the Clip.
 	 */
 	public void stop(){
 		song.stop();
+		song.setMicrosecondPosition(0);
+	}
+	
+	/**
+	 * 
+	 * @param x Takes a double as in parameter. Stops the song, sets the currentPos to x and plays the song.  
+	 */
+	public void setTime(double x) {
+		song.stop();
+		long currentPos = (long) x*1000000;
+		song.setMicrosecondPosition(currentPos);
+		play();
+	}
+	
+	/**
+	 * 
+	 * @return Returns the Current position in the song in seconds.
+	 */
+	public int getCurrentPos() {
+		return (int) song.getMicrosecondPosition()/1000000;
+	}
+	
+	/**
+	 * 
+	 * @return Returns the songs length in seconds
+	 */
+	public int getSongLength() {
+		return (int) song.getMicrosecondLength()/1000000;
 	}
 	
 	public static void main(String[] args) {
@@ -87,7 +114,10 @@ public class MusicPlayer {
 		test.pause();
 		
 		scanner.next();
-		test.play();
+		System.out.println(test.getCurrentPos());
+		System.out.println(test.getSongLength());
+		
+		scanner.next();
 		
 		scanner.close();
 	}
