@@ -120,7 +120,7 @@ public class MusicPlayer {
 	
 	/**
 	 * 
-	 * @param x
+	 * @param x Takes an ItemSong and adds the song first in the queue.
 	 */
 	public void adddSongToFirstQueue(ItemSong x) {
 		
