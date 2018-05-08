@@ -1,15 +1,14 @@
-package labbXtra;
 import java.io.*;
 import java.util.*;
 
 public class ReadSongsFromFile{
 	
-	public static void main(String[] args) {
+	public static HashTable initHashTable() {
 		
 		String[] arrayString;
 		String oneline;
 		HashTable x = new HashTable();
-		File songs = new File("C:\\Users\\Gukken TOAO\\eclipse-workspace\\LabbXtra\\src\\labbXtra\\songs.txt");
+		File songs = new File("songs.txt");
 		try {
 		Scanner text = new Scanner(songs);
 		
@@ -25,5 +24,7 @@ public class ReadSongsFromFile{
 		}
 		
 		}catch(Exception e){System.out.println("Can't find file");}
+		
+		return x;
 	}
 }	
