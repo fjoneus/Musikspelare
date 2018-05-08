@@ -1,6 +1,13 @@
 package Proj6;
 
 import java.awt.event.KeyEvent;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.swing.text.html.HTMLDocument.Iterator;
 
 /**
  *
@@ -14,6 +21,8 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 	public MusicPlayerGUI() {
 		super("TuneIFY");
 		playThisSong = "Enter Song or Artist";
+		hash = ReadSongsFromFile.initHashTable();
+		player = new MusicPlayer();
 		initComponents();
 
 	}
@@ -77,10 +86,6 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 		});
 
 		searchBar.addKeyListener(new java.awt.event.KeyAdapter() {
-			public void keyTyped(java.awt.event.KeyEvent evt) {
-				searchBarKeyTyped(evt);
-			}
-
 			public void keyPressed(java.awt.event.KeyEvent evt) {
 				searchBarKeyPressed(evt);
 			}
@@ -104,7 +109,7 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 		currentSong.setForeground(java.awt.Color.white);
 		currentSong.setText("No Song Playing");
 		getContentPane().add(currentSong);
-		currentSong.setBounds(180, 310, 260, 50);
+		currentSong.setBounds(180, 310, 350, 50);
 
 		pause.setText("PAUSE");
 		pause.addActionListener(new java.awt.event.ActionListener() {
@@ -119,19 +124,7 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 		results.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 		results.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
 		results.setForeground(new java.awt.Color(240, 240, 240));
-		results.setModel(new javax.swing.AbstractListModel<String>() {
-			String[] strings = { "Levels", "Wake Me Up", "Without You", "Lonely Together", "Love the way you lie",
-					"Lose Yourself", "Rap God", "21 Rockstar", "Better Now", "Paranoid", "Rich & Sad", "Over Now",
-					"Spoil My Night", "Losing You", "Warrior", "Crying Over You", "Our Worlds Collide", "Numb" };
-
-			public int getSize() {
-				return strings.length;
-			}
-
-			public String getElementAt(int i) {
-				return strings[i];
-			}
-		});
+		results.setModel(new MyModel(artistresults));
 		results.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
 		results.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 		results.setDoubleBuffered(true);
@@ -177,6 +170,7 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 		timeline.setValue(0);
 		timeline.setAutoscrolls(true);
 		timeline.addChangeListener(new javax.swing.event.ChangeListener() {
+
 			public void stateChanged(javax.swing.event.ChangeEvent evt) {
 				timelineStateChanged(evt);
 			}
@@ -196,18 +190,7 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 		queue.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 		queue.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
 		queue.setForeground(new java.awt.Color(240, 240, 240));
-		queue.setModel(new javax.swing.AbstractListModel<String>() {
-			String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5", "Item 1", "Item 2", "Item 3",
-					"Item 4", "Item 5", "Item 1", "Item 2", "Item 3", "Item 4", "Item 5", " " };
-
-			public int getSize() {
-				return strings.length;
-			}
-
-			public String getElementAt(int i) {
-				return strings[i];
-			}
-		});
+		queue.setModel(new MyModel(queueresults));
 		queue.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
 		queue.setDoubleBuffered(true);
 		queue.setOpaque(false);
@@ -232,8 +215,7 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 		queuetext.setBounds(410, 30, 70, 30);
 		queuetext.setVisible(false);
 
-		background.setIcon(
-				new javax.swing.ImageIcon("X:\\DokumentSkola\\AlgoritmerochDatastrukturer\\Project6\\imagex.jpg")); // NOI18N
+		background.setIcon(new javax.swing.ImageIcon("imagex.jpg")); // NOI18N
 		background.setText("Background");
 		getContentPane().add(background);
 		background.setBounds(0, 0, 600, 450);
@@ -244,7 +226,7 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 
 		});
 
-		setSize(616, 480);
+		setSize(616, 490);
 	}// </editor-fold>
 
 	private void backgroundMouseClicked(java.awt.event.MouseEvent evt) {
@@ -254,7 +236,14 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 
 	private void searchBarKeyPressed(java.awt.event.KeyEvent evt) {
 		if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+			playThisSong = searchBar.getText();
 			System.out.println(playThisSong);
+			ArrayList list = hash.find(playThisSong);
+			artistresults = new String[list.size()];
+			for (int i = 0; i < list.size(); i++) {
+				artistresults[i] = ((ItemSong) list.get(i)).getSongTitle();
+			}
+			results.setModel(new MyModel(artistresults));
 			playThisSong = "Enter Song or Artist";
 			searchBar.setText(playThisSong);
 
@@ -264,14 +253,30 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 
 	private void stopActionPerformed(java.awt.event.ActionEvent evt) {
 		System.out.println("STOP");
+		player.stop();
 	}
 
 	private void resultsMouseClicked(java.awt.event.MouseEvent evt) {
 		int x = results.getSelectedIndex();
+		ArrayList templist = hash.find(artistresults[x]);
 		if (evt.getButton() == evt.BUTTON1 && evt.getClickCount() == 2) {
-			System.out.println("play: " + x);
-			currentSong.setText(results.getSelectedValue());
+			player.addSongFirstInQueue(((ItemSong) templist.get(0)));
+			currentSong.setText(player.getCurrentSong().toString());
+			songLength.setText(player.timeToString());
+			timeline.setMaximum(player.getSongLength());
+			
+
 		} else if (evt.getButton() == evt.BUTTON3) {
+
+			player.addSongToQueue((ItemSong) templist.get(0));
+			ArrayDeque<ItemSong> qu = player.getQueue();
+			queueresults = new String[qu.size()];
+			java.util.Iterator<ItemSong> itr = qu.iterator();
+			int cc = 0;
+			while (itr.hasNext()) {
+				queueresults[cc++] = itr.next().toString();
+			}
+			queue.setModel(new MyModel(queueresults));
 
 			System.out.println(x + " added in queue");
 		}
@@ -280,13 +285,32 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 
 	private void nextActionPerformed(java.awt.event.ActionEvent evt) {
 		System.out.println("NEXT");
-		timeline.setValue(timeline.getValue() + 1);
+		player.nextSong();
+		currentSong.setText(player.getCurrentSong().toString());
+		songLength.setText(player.timeToString());
+		timeline.setMaximum(player.getSongLength());
+		ArrayDeque<ItemSong> qu = player.getQueue();
+		queueresults = new String[qu.size()];
+		java.util.Iterator<ItemSong> itr = qu.iterator();
+		int cc = 0;
+		while (itr.hasNext()) {
+			queueresults[cc++] = itr.next().toString();
+		}
+		queue.setModel(new MyModel(queueresults));
 	}
 
 	private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {
+		playThisSong = searchBar.getText();
 		System.out.println(playThisSong);
+		ArrayList list = hash.find(playThisSong);
+		artistresults = new String[list.size()];
+		for (int i = 0; i < list.size(); i++) {
+			artistresults[i] = ((ItemSong) list.get(i)).getSongTitle();
+		}
+		results.setModel(new MyModel(artistresults));
 		playThisSong = "Enter Song or Artist";
 		searchBar.setText(playThisSong);
+
 	}
 
 	private void showQueueButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -319,23 +343,20 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 	private void playActionPerformed(java.awt.event.ActionEvent evt) {
 		playThisSong = "Enter Song or Artist";
 		searchBar.setText(playThisSong);
+		player.resume();
 		System.out.println("PLAY");
 
 	}
 
 	private void pauseActionPerformed(java.awt.event.ActionEvent evt) {
 		System.out.println("PAUSE");
-	}
-
-	private void searchBarKeyTyped(java.awt.event.KeyEvent evt) {
-		char c = evt.getKeyChar();
-		playThisSong += c;
-
+		player.pause();
 	}
 
 	private void timelineStateChanged(javax.swing.event.ChangeEvent evt) {
+
 		int x = timeline.getValue();
-		System.out.println(x);
+		player.setTime(x);
 		elapsedTime.setText(x + "");
 
 	}
@@ -353,7 +374,7 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 		 * look and feel. For details see
 		 * http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
 		 */
-		
+
 		try {
 			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
 				if ("Nimbus".equals(info.getName())) {
@@ -374,7 +395,7 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 			java.util.logging.Logger.getLogger(MusicPlayerGUI.class.getName()).log(java.util.logging.Level.SEVERE, null,
 					ex);
 		}
-		
+
 		// </editor-fold>
 
 		/* Create and display the form */
@@ -404,5 +425,10 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 	private javax.swing.JButton stop;
 	private javax.swing.JSlider timeline;
 	private String playThisSong;
+	private String[] artistresults = { "No Results" };
+	private String[] queueresults = { "No Songs in Queue" };
+	private static HashTable hash;
+	private MusicPlayer player;
+
 	// End of variables declaration
 }
