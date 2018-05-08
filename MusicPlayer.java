@@ -1,5 +1,3 @@
-
-
 /**
  * This music player can take in a file from an object. Extract the file name (source of the file), and find the file. 
  * The player hold all the necessary methods for play, pause and so on.
@@ -11,6 +9,8 @@
 
 import java.util.*;
 import java.io.*;
+import java.sql.Time;
+
 import javax.sound.sampled.*;
 
 public class MusicPlayer {
@@ -84,7 +84,12 @@ public class MusicPlayer {
 		song.stop();
 		long currentPos = (long) x*1000000;
 		song.setMicrosecondPosition(currentPos);
-		play();
+		try {
+		Thread.sleep(500);
+		}
+		catch(Exception e) {}
+		
+		resume();
 	}
 	
 	/**
@@ -97,10 +102,12 @@ public class MusicPlayer {
 	
 	/**
 	 * 
-	 * @return Returns the songs length in seconds
+	 * @return Returns the songs length as a String
 	 */
-	public int getSongLength() {
-		return (int) song.getMicrosecondLength()/1000000;
+	public String getSongLength() {
+		int min =(int) song.getMicrosecondLength()/1000000/60;
+		double sec = song.getMicrosecondLength()/1000000 % 60;
+		return String.valueOf(min) + ":" + String.valueOf(sec);
 	}
 	
 	/**
@@ -153,13 +160,14 @@ public class MusicPlayer {
 		play();
 	}
 	
-	public ArrayDeque getQueue() {
+	public ArrayDeque<ItemSong> getQueue() {
 		return queue;
 	}
 	
 	public ItemSong getCurrentSong() {
 		return songFile;
 	}
+	
 	
 //	public static void main(String[] args) {
 //		
