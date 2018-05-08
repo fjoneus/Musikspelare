@@ -16,22 +16,15 @@ public class MusicPlayer {
 
 	private AudioInputStream songFile;
 	private Clip song;
-	private File file;
-	private boolean playPush;
+	private ArrayDeque<AudioInputStream> queue = new ArrayDeque<AudioInputStream>();
+	private boolean active = true;
 	
 	
 	/**
-	 * Constructor -> Extracts the songName from the Item object and creates the AudioInputStream
+	 * Constructor -> Does nothing, just creates the MusicPlayer object
 	 */
-	public MusicPlayer(ItemSong x) {
+	public MusicPlayer() {
 		
-		try {
-			File file = new File(x.getSongFilePath());   //Create the File object that holds the path to the file
-			songFile = AudioSystem.getAudioInputStream(file.getAbsoluteFile()); //Set the "private songFile" so it can be used later in the program. AudioSystem returns a AudioInputStream object
-			}
-			catch(Exception e) {
-				System.out.println(e);
-			}
 	}
 	
 	/**
@@ -40,21 +33,23 @@ public class MusicPlayer {
 	 * @exception Catches all the exceptions and prints them
 	 */
 	public void play() {
-			if(playPush == true) {
-				resume();
-			}
-			else {
-				try {
+			
+		if(active == false) {
+			resume();
+		}
+		else {
+			try {
+				if(!queue.isEmpty()) {
 					song = AudioSystem.getClip();
-					song.open(songFile);
-					//song.setMicrosecondPosition(currentPos);
+					song.open(queue.poll());
 					song.start();
-					playPush = true;
-				}
-				catch(Exception e) {
-					System.out.println(e);
+					active = true;
 				}
 			}
+			catch(Exception e) {
+				System.out.println(e);
+			}
+		}
 	}
 	
 	public void resume() {
@@ -74,6 +69,7 @@ public class MusicPlayer {
 	public void stop(){
 		song.stop();
 		song.setMicrosecondPosition(0);
+		active = false;
 	}
 	
 	/**
@@ -103,24 +99,66 @@ public class MusicPlayer {
 		return (int) song.getMicrosecondLength()/1000000;
 	}
 	
+	/**
+	 * 
+	 * @param x Takes an ItemSong as input and adds the song to queue 
+	 */
+	public void addSongToQueue(String x) {
+		
+		try {
+			//File file = new File(x.getSongFilePath());   //Create the File object that holds the path to the file
+			File file = new File(x);
+			songFile = AudioSystem.getAudioInputStream(file.getAbsoluteFile()); //Set the "private songFile" so it can be used later in the program. AudioSystem returns a AudioInputStream object
+		}
+			catch(Exception e) {
+				System.out.println(e);
+			}
+		
+		queue.add(songFile);
+	}
+	
+	/**
+	 * Stops the song, and plays it. This will trigger the play method to get the next in song queue
+	 */
+	public void nextSong() {
+		stop();
+		active = true;
+		play();
+	}
+	
+	
 //	public static void main(String[] args) {
 //		
-//		MusicPlayer test = new MusicPlayer("Bamse.wav");
+//		Scanner scanner = new Scanner(System.in);
+//		
+//		//Add song and play
+//		MusicPlayer test = new MusicPlayer();
+//		test.addSongToQueue("Avicii-AddictedToYou.wav");
+//		test.addSongToQueue("Avicii-HeyBrother.wav");
 //		test.play();
 //		
-//		Scanner scanner = new Scanner(System.in);
+//		
+//		scanner.next();
+//		test.stop();
+//		
+//		
+//		scanner.next();
+//		test.play();
+//		
 //		
 //		scanner.next();
 //		test.pause();
 //		
 //		scanner.next();
-//		System.out.println(test.getCurrentPos());
-//		System.out.println(test.getSongLength());
+//		test.resume();
 //		
 //		scanner.next();
+//		test.nextSong();
 //		
+//		//Keep the main alive
+//		scanner.next();
 //		scanner.close();
+//		
 //	}
-	
 }
 
