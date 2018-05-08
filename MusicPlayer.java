@@ -106,6 +106,11 @@ public class MusicPlayer {
 	 * @param x Takes an ItemSong as input and adds the song to queue 
 	 */
 	public void addSongToQueue(ItemSong x) {
+		if(stopped == true) {
+			song.close();
+			active = false;
+			stopped = false;
+		}
 		
 		try {
 			File file = new File(x.getSongFilePath());   //Create the File object that holds the path to the file
@@ -120,9 +125,11 @@ public class MusicPlayer {
 	
 	/**
 	 * 
-	 * @param x Takes an ItemSong and adds the song first in the queue.
+	 * @param x Takes an ItemSong and adds the song first in the queue. 
 	 */
-	public void adddSongToFirstQueue(ItemSong x) {
+	public void adddSongToFirstQueueAndPlay(ItemSong x) {
+		
+		stopped = false;
 		
 		try {
 			File file = new File(x.getSongFilePath());   //Create the File object that holds the path to the file
@@ -133,6 +140,13 @@ public class MusicPlayer {
 			}
 		
 		queue.addFirst(songFile);
+		
+		//If a song is playing and we whant to play a new one, close it and start the new one.
+		if(active == true) {
+		song.close();
+		stopped = false;
+		}
+		play();
 	}
 	
 	/**
@@ -142,6 +156,10 @@ public class MusicPlayer {
 		stop();
 		stopped = false;
 		play();
+	}
+	
+	public ArrayDeque getQueue() {
+		return queue;
 	}
 	
 	
