@@ -235,7 +235,7 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 		if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
 			playThisSong = searchBar.getText();
 			System.out.println(playThisSong);
-			ArrayList list = hash.find(playThisSong);
+			ArrayList<ItemSong> list = hash.find(playThisSong);
 			artistresults = new String[list.size()];
 			for (int i = 0; i < list.size(); i++) {
 				artistresults[i] = ((ItemSong) list.get(i)).getSongTitle();
@@ -243,9 +243,7 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 			results.setModel(new MyModel(artistresults));
 			playThisSong = "Enter Song or Artist";
 			searchBar.setText(playThisSong);
-
 		}
-
 	}
 
 	private void stopActionPerformed(java.awt.event.ActionEvent evt) {
@@ -255,7 +253,7 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 
 	private void resultsMouseClicked(java.awt.event.MouseEvent evt) {
 		int x = results.getSelectedIndex();
-		ArrayList templist = hash.find(artistresults[x]);
+		ArrayList<ItemSong> templist = hash.find(artistresults[x]);
 		if (evt.getButton() == evt.BUTTON1 && evt.getClickCount() == 2) {
 			player.addSongFirstInQueue(((ItemSong) templist.get(0)));
 			currentSong.setText(player.getCurrentSong().toString());
@@ -277,7 +275,6 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 
 			System.out.println(x + " added in queue");
 		}
-
 	}
 
 	private void nextActionPerformed(java.awt.event.ActionEvent evt) {
@@ -299,7 +296,7 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 	private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		playThisSong = searchBar.getText();
 		System.out.println(playThisSong);
-		ArrayList list = hash.find(playThisSong);
+		ArrayList<ItemSong> list = hash.find(playThisSong);
 		artistresults = new String[list.size()];
 		for (int i = 0; i < list.size(); i++) {
 			artistresults[i] = ((ItemSong) list.get(i)).getSongTitle();
