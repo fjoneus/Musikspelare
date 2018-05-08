@@ -1,0 +1,8 @@
+	Timer timer = new Timer();
+    timer.scheduleAtFixedRate(new Task(), 10000, 100);
+	
+	class Task extends TimerTask{
+       		public void run() {
+       			//Skriv koden som ska utföras här
+       			}
+   	}
