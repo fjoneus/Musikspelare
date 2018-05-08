@@ -17,8 +17,8 @@ public class MusicPlayer {
 	private AudioInputStream songFile;
 	private Clip song;
 	private ArrayDeque<AudioInputStream> queue = new ArrayDeque<AudioInputStream>();
-	private boolean active = true;
-	
+	private boolean stopped = false;
+	private boolean active = false;
 	
 	/**
 	 * Constructor -> Does nothing, just creates the MusicPlayer object
@@ -34,12 +34,13 @@ public class MusicPlayer {
 	 */
 	public void play() {
 			
-		if(active == false) {
+		if(stopped == true) {
 			resume();
+			stopped = false;
 		}
 		else {
 			try {
-				if(!queue.isEmpty()) {
+				if(!queue.isEmpty() && active == false) {
 					song = AudioSystem.getClip();
 					song.open(queue.poll());
 					song.start();
@@ -69,6 +70,7 @@ public class MusicPlayer {
 	public void stop(){
 		song.stop();
 		song.setMicrosecondPosition(0);
+		stopped = true;
 		active = false;
 	}
 	
@@ -117,11 +119,28 @@ public class MusicPlayer {
 	}
 	
 	/**
+	 * 
+	 * @param x
+	 */
+	public void adddSongToFirstQueue(ItemSong x) {
+		
+		try {
+			File file = new File(x.getSongFilePath());   //Create the File object that holds the path to the file
+			songFile = AudioSystem.getAudioInputStream(file.getAbsoluteFile()); //Set the "private songFile" so it can be used later in the program. AudioSystem returns a AudioInputStream object
+		}
+			catch(Exception e) {
+				System.out.println(e);
+			}
+		
+		queue.addFirst(songFile);
+	}
+	
+	/**
 	 * Stops the song, and plays it. This will trigger the play method to get the next in song queue
 	 */
 	public void nextSong() {
 		stop();
-		active = true;
+		stopped = false;
 		play();
 	}
 	
@@ -138,12 +157,7 @@ public class MusicPlayer {
 //		
 //		
 //		scanner.next();
-//		test.stop();
-//		
-//		
-//		scanner.next();
 //		test.play();
-//		
 //		
 //		scanner.next();
 //		test.pause();
