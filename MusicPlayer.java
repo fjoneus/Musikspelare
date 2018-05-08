@@ -14,9 +14,9 @@ import javax.sound.sampled.*;
 
 public class MusicPlayer {
 
-	private AudioInputStream songFile;
+	private ItemSong songFile;
 	private Clip song;
-	private ArrayDeque<AudioInputStream> queue = new ArrayDeque<AudioInputStream>();
+	private ArrayDeque<ItemSong> queue = new ArrayDeque<ItemSong>();
 	private boolean stopped = false;
 	private boolean active = false;
 	
@@ -42,7 +42,7 @@ public class MusicPlayer {
 			try {
 				if(!queue.isEmpty() && active == false) {
 					song = AudioSystem.getClip();
-					song.open(queue.poll());
+					song.open(AudioSystem.getAudioInputStream(new File(queue.pollFirst().getSongFilePath()).getAbsoluteFile()));
 					song.start();
 					active = true;
 				}
@@ -112,15 +112,15 @@ public class MusicPlayer {
 			stopped = false;
 		}
 		
-		try {
-			File file = new File(x.getSongFilePath());   //Create the File object that holds the path to the file
-			songFile = AudioSystem.getAudioInputStream(file.getAbsoluteFile()); //Set the "private songFile" so it can be used later in the program. AudioSystem returns a AudioInputStream object
-		}
-			catch(Exception e) {
-				System.out.println(e);
-			}
+		//try {
+			//File file = new File(x.getSongFilePath());   //Create the File object that holds the path to the file
+			//songFile = AudioSystem.getAudioInputStream(file.getAbsoluteFile()); //Set the "private songFile" so it can be used later in the program. AudioSystem returns a AudioInputStream object
+		//}
+			//catch(Exception e) {
+			//	System.out.println(e);
+			//}
 		
-		queue.add(songFile);
+		queue.add(x);
 	}
 	
 	/**
@@ -129,17 +129,10 @@ public class MusicPlayer {
 	 */
 	public void adddSongToFirstQueueAndPlay(ItemSong x) {
 		
+		//If a song has been stopped we have to set the label stopped to false, otherwise the play function will play both the 
 		stopped = false;
-		
-		try {
-			File file = new File(x.getSongFilePath());   //Create the File object that holds the path to the file
-			songFile = AudioSystem.getAudioInputStream(file.getAbsoluteFile()); //Set the "private songFile" so it can be used later in the program. AudioSystem returns a AudioInputStream object
-		}
-			catch(Exception e) {
-				System.out.println(e);
-			}
-		
-		queue.addFirst(songFile);
+				
+		queue.addFirst(x);
 		
 		//If a song is playing and we whant to play a new one, close it and start the new one.
 		if(active == true) {
