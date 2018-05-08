@@ -22,7 +22,7 @@ public class ReadSongsFromFile{
 			double lenght = Double.parseDouble(arrayString[3]);
 			x.addSong(new ItemSong(artist,title,filename,lenght)); 
 		}
-		
+		text.close();
 		}catch(Exception e){System.out.println("Can't find file");}
 		
 		return x;
