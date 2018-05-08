@@ -103,11 +103,10 @@ public class MusicPlayer {
 	 * 
 	 * @param x Takes an ItemSong as input and adds the song to queue 
 	 */
-	public void addSongToQueue(String x) {
+	public void addSongToQueue(ItemSong x) {
 		
 		try {
-			//File file = new File(x.getSongFilePath());   //Create the File object that holds the path to the file
-			File file = new File(x);
+			File file = new File(x.getSongFilePath());   //Create the File object that holds the path to the file
 			songFile = AudioSystem.getAudioInputStream(file.getAbsoluteFile()); //Set the "private songFile" so it can be used later in the program. AudioSystem returns a AudioInputStream object
 		}
 			catch(Exception e) {
