@@ -1,4 +1,5 @@
 
+
 /**
  * This music player can take in a file from an object. Extract the file name (source of the file), and find the file. 
  * The player hold all the necessary methods for play, pause and so on.
@@ -42,6 +43,7 @@ public class MusicPlayer {
 			try {
 				if(!queue.isEmpty() && active == false) {
 					song = AudioSystem.getClip();
+					songFile = queue.peek();
 					song.open(AudioSystem.getAudioInputStream(new File(queue.pollFirst().getSongFilePath()).getAbsoluteFile()));
 					song.start();
 					active = true;
@@ -127,7 +129,7 @@ public class MusicPlayer {
 	 * 
 	 * @param x Takes an ItemSong and adds the song first in the queue. 
 	 */
-	public void adddSongToFirstQueueAndPlay(ItemSong x) {
+	public void addSongFirstInQueue(ItemSong x) {
 		
 		//If a song has been stopped we have to set the label stopped to false, otherwise the play function will play both the 
 		stopped = false;
@@ -136,7 +138,7 @@ public class MusicPlayer {
 		
 		//If a song is playing and we whant to play a new one, close it and start the new one.
 		if(active == true) {
-		song.close();
+		stop();
 		stopped = false;
 		}
 		play();
@@ -155,6 +157,9 @@ public class MusicPlayer {
 		return queue;
 	}
 	
+	public ItemSong getCurrentSong() {
+		return songFile;
+	}
 	
 //	public static void main(String[] args) {
 //		
@@ -185,4 +190,3 @@ public class MusicPlayer {
 //		
 //	}
 }
-
