@@ -1,5 +1,3 @@
-package Proj6;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -38,7 +36,7 @@ public class HashTable {
 		if (theArrayArtist[hashCode(x.getArtistName())] != null) {
 			ItemArtist artistobj = (ItemArtist) theArrayArtist[hashCode(x.getArtistName())];
 			artistobj.theArrayList.add(x);
-			artistobj.songs += "\n" + x.getSongTitle();
+			//artistobj.songs += "\n" + x.getSongTitle();
 
 		} else {
 			ItemArtist artist = new ItemArtist(x.getSongTitle(), x.getArtistName(), x);
@@ -48,9 +46,9 @@ public class HashTable {
 
 	}
 
-	public ArrayList find(String x) {
+	public ArrayList<ItemSong> find(String x) {
 		int hash = hashCode(x);
-		ArrayList arr = new ArrayList();
+		ArrayList<ItemSong> arr = new ArrayList<ItemSong>();
 
 		if (theArray[hash] != null) {
 			arr.add((ItemSong) theArray[hash]);
