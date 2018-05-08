@@ -1,13 +1,11 @@
-package Proj6;
-
 import java.awt.event.KeyEvent;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
+//import java.util.Timer;
+//import java.util.TimerTask;
 
-import javax.sound.sampled.AudioInputStream;
-import javax.swing.text.html.HTMLDocument.Iterator;
+//import javax.sound.sampled.AudioInputStream;
+//import javax.swing.text.html.HTMLDocument.Iterator;
 
 /**
  *
@@ -24,7 +22,6 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 		hash = ReadSongsFromFile.initHashTable();
 		player = new MusicPlayer();
 		initComponents();
-
 	}
 
 	/**
@@ -429,6 +426,4 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 	private String[] queueresults = { "No Songs in Queue" };
 	private static HashTable hash;
 	private MusicPlayer player;
-
-	// End of variables declaration
 }
