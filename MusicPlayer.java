@@ -1,5 +1,3 @@
-package Proj6;
-
 /**
  * This music player can take in a file from an object. Extract the file name (source of the file), and find the file. 
  * The player hold all the necessary methods for play, pause and so on.
@@ -11,7 +9,7 @@ package Proj6;
 
 import java.util.*;
 import java.io.*;
-import java.sql.Time;
+//import java.sql.Time;
 
 import javax.sound.sampled.*;
 
