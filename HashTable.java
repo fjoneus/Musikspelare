@@ -1,3 +1,4 @@
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -72,35 +73,4 @@ public class HashTable {
 		return hash % theSize;
 
 	}
-
-	public static void main(String[] args) {
-
-		HashTable hash = new HashTable();
-
-		hash.addSong(new ItemSong("Eminem", "Love the way you lie", "/asdaölsdfklö", 2.201));
-		hash.addSong(new ItemSong("Eminem", "Lose Yourself", "/asdaölkslö", 2.205));
-		hash.addSong(new ItemSong("Thåström", "Kom Hem", "/asdaölkslö", 3.205));
-		hash.addSong(new ItemSong("Eminem", "Rap God", "/asdaölkslö", 3.105));
-		hash.addSong(new ItemSong("Ronny & Ragge", "Sug Kuk", "/asdaölkslö", 3.305));
-		hash.addSong(new ItemSong("Post Malone", "21 Rockstar", "/asdaölkslö", 2.405));
-		hash.addSong(new ItemSong("Avicii", "Levels", "/asdaölkslö", 1.405));
-		hash.addSong(new ItemSong("Foo Fighters", "The Pretender", "/asdaölkslö", 2.205));
-		hash.addSong(new ItemSong("Avicii", "Wake Me Up", "/asdaölkslö", 3.215));
-		hash.addSong(new ItemSong("Avicii", "Without You", "/asdaölkslö", 3.225));
-		hash.addSong(new ItemSong("Avicii", "Lonely Together", "/asdaölkslö", 3.333));
-
-		System.out.println("--------------------------");
-		for (Object i : theArrayArtist) {
-			if (i != null)
-				System.out.println(i);
-		}
-		System.out.println("--------------------------");
-
-		System.out.println("--------------------------");
-		System.out.println("Soundtracks: " + amountOfObjects);
-		System.out.println("--------------------------");
-		System.out.println("Artists: " + amountOfArtists);
-
-	}
-
 }
