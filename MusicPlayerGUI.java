@@ -1,11 +1,13 @@
+
+
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-//import java.util.Timer;
-//import java.util.TimerTask;
 
-//import javax.sound.sampled.AudioInputStream;
-//import javax.swing.text.html.HTMLDocument.Iterator;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 /**
  *
@@ -20,6 +22,7 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 		super("TuneIFY");
 		playThisSong = "Enter Song or Artist";
 		hash = ReadSongsFromFile.initHashTable();
+		randomarray = ReadSongsFromFile.getRandomArray();
 		player = new MusicPlayer();
 		initComponents();
 	}
@@ -50,6 +53,9 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 		elapsedTime = new javax.swing.JTextField();
 		queuetext = new javax.swing.JTextField();
 		background = new javax.swing.JLabel();
+		random = new javax.swing.JButton();
+		volumeslide = new javax.swing.JSlider();
+		volumetext = new javax.swing.JLabel();
 
 		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 		getContentPane().setLayout(null);
@@ -62,6 +68,15 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 		});
 		getContentPane().add(play);
 		play.setBounds(228, 406, 70, 35);
+
+		random.setText("PLAY RANDOM");
+		random.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				randomActionPerformed(evt);
+			}
+		});
+		getContentPane().add(random);
+		random.setBounds(20, 406, 120, 35);
 
 		searchBar.setBackground(new java.awt.Color(0, 0, 0, 64));
 		searchBar.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
@@ -107,6 +122,12 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 		currentSong.setText("No Song Playing");
 		getContentPane().add(currentSong);
 		currentSong.setBounds(180, 310, 350, 50);
+		
+		volumetext.setText("Volume");
+		volumetext.setForeground(java.awt.Color.white);
+		volumetext.setBounds(20, 375, 50, 10);
+		getContentPane().add(volumetext);
+		
 
 		pause.setText("PAUSE");
 		pause.addActionListener(new java.awt.event.ActionListener() {
@@ -163,7 +184,7 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 		getContentPane().add(next);
 		next.setBounds(387, 406, 70, 35);
 
-		timeline.setMaximum(101);
+		timeline.setMaximum(100);
 		timeline.setValue(0);
 		timeline.setAutoscrolls(true);
 		timeline.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -174,10 +195,24 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 		});
 		getContentPane().add(timeline);
 		timeline.setBounds(210, 370, 200, 26);
+		
+		volumeslide.setMaximum(100);
+		volumeslide.setMinimum(0);
+		volumeslide.setValue(20);
+		volumeslide.setAutoscrolls(true);
+		volumeslide.addChangeListener(new javax.swing.event.ChangeListener() {
+
+			public void stateChanged(javax.swing.event.ChangeEvent evt) {
+				volumeslideStateChanged(evt);
+			}
+		});
+		volumeslide.setOrientation(SwingConstants.VERTICAL);
+		volumeslide.setBounds(20, 270, 40, 100);
+		getContentPane().add(volumeslide);
 
 		songLength.setBackground(new java.awt.Color(0, 0, 0, 64));
 		songLength.setForeground(new java.awt.Color(240, 240, 240));
-		songLength.setText("123");
+		songLength.setText("0:00");
 		songLength.setBorder(null);
 
 		getContentPane().add(songLength);
@@ -256,10 +291,7 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 		ArrayList<ItemSong> templist = hash.find(artistresults[x]);
 		if (evt.getButton() == evt.BUTTON1 && evt.getClickCount() == 2) {
 			player.addSongFirstInQueue(((ItemSong) templist.get(0)));
-			currentSong.setText(player.getCurrentSong().toString());
-			songLength.setText(player.timeToString());
-			timeline.setMaximum(player.getSongLength());
-			
+			next();
 
 		} else if (evt.getButton() == evt.BUTTON3) {
 
@@ -279,18 +311,15 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 
 	private void nextActionPerformed(java.awt.event.ActionEvent evt) {
 		System.out.println("NEXT");
-		player.nextSong();
-		currentSong.setText(player.getCurrentSong().toString());
-		songLength.setText(player.timeToString());
-		timeline.setMaximum(player.getSongLength());
-		ArrayDeque<ItemSong> qu = player.getQueue();
-		queueresults = new String[qu.size()];
-		java.util.Iterator<ItemSong> itr = qu.iterator();
-		int cc = 0;
-		while (itr.hasNext()) {
-			queueresults[cc++] = itr.next().toString();
-		}
-		queue.setModel(new MyModel(queueresults));
+		next();
+	}
+
+	private void randomActionPerformed(java.awt.event.ActionEvent evt) {
+		int x = (int) (Math.random() * (randomarray.length - 1));
+		ArrayList<ItemSong> templist = hash.find(randomarray[x]);
+		player.addSongFirstInQueue(((ItemSong) templist.get(0)));
+		next();
+
 	}
 
 	private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -323,6 +352,7 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 	private void searchBarMouseClicked(java.awt.event.MouseEvent evt) {
 		playThisSong = "";
 		searchBar.setText(playThisSong);
+		
 
 	}
 
@@ -348,11 +378,49 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 	}
 
 	private void timelineStateChanged(javax.swing.event.ChangeEvent evt) {
-
+		if (ignoreEvents) {
+			return;
+		}
 		int x = timeline.getValue();
 		player.setTime(x);
-		elapsedTime.setText(x + "");
+		elapsedTime.setText(player.timeToString(player.getCurrentPos()));
+	}
+    
+	private void volumeslideStateChanged(javax.swing.event.ChangeEvent evt) {
+		player.setVolume(volumeslide.getValue());
+	}
+	/**
+	 * This method plays the next song in queue in "MusicPlayer", also updates
+	 * various GUI variables. next() also calls itself recursively if the current
+	 * song has reached it's end. next() is called from various listeners the GUI
+	 * The timer created in this method is used to continually update the "progress
+	 * bar" to the current position of the song duration.
+	 */
+	private void next() {
+		Timer progressTimer = new Timer(500, e -> {
+			ignoreEvents = true;
+			timeline.setValue(player.getCurrentPos());
+			elapsedTime.setText(player.timeToString(player.getCurrentPos()));
+			if (player.getCurrentPos() == player.getSongLength()) {
+				next();
+			}
+			SwingUtilities.invokeLater(() -> ignoreEvents = false);
 
+		});
+		progressTimer.start();
+		player.nextSong();
+		currentSong.setText(player.getCurrentSong().toString());
+		songLength.setText(player.timeToString(player.getSongLength()));
+		timeline.setMaximum(player.getSongLength());
+		timeline.setValue(0);
+		ArrayDeque<ItemSong> qu = player.getQueue();
+		queueresults = new String[qu.size()];
+		java.util.Iterator<ItemSong> itr = qu.iterator();
+		int cc = 0;
+		while (itr.hasNext()) {
+			queueresults[cc++] = itr.next().toString();
+		}
+		queue.setModel(new MyModel(queueresults));
 	}
 
 	/**
@@ -400,13 +468,13 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 		});
 	}
 
-	// Variables declaration - do not modify
 	private javax.swing.JLabel background;
 	private javax.swing.JLabel currentSong;
 	private javax.swing.JTextField elapsedTime;
 	private javax.swing.JButton next;
 	private javax.swing.JButton pause;
 	private javax.swing.JButton play;
+	private javax.swing.JButton random;
 	private javax.swing.JList<String> queue;
 	private javax.swing.JScrollPane queuepane;
 	private javax.swing.JTextField queuetext;
@@ -418,6 +486,10 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 	private javax.swing.JTextField songLength;
 	private javax.swing.JButton stop;
 	private javax.swing.JSlider timeline;
+	private javax.swing.JSlider volumeslide;
+	private javax.swing.JLabel volumetext;
+	private String[] randomarray;
+	private boolean ignoreEvents;
 	private String playThisSong;
 	private String[] artistresults = { "No Results" };
 	private String[] queueresults = { "No Songs in Queue" };
