@@ -1,5 +1,4 @@
 
-package Proj6;
 
 public class ItemSong {
 
