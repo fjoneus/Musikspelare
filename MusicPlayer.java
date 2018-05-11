@@ -1,5 +1,3 @@
-
-
 /**
  * This music player can take in a file from an object. Extract the file name (source of the file), and find the file. 
  * The player hold all the necessary methods for play, pause and so on.
@@ -14,6 +12,8 @@ import java.io.*;
 //import java.sql.Time;
 
 import javax.sound.sampled.*;
+
+import org.junit.jupiter.api.Test;
 
 public class MusicPlayer {
 
@@ -48,8 +48,7 @@ public class MusicPlayer {
 				if (!queue.isEmpty() && active == false) {
 					song = AudioSystem.getClip();
 					songFile = queue.peek();
-					song.open(AudioSystem
-							.getAudioInputStream(new File(queue.pollFirst().getSongFilePath()).getAbsoluteFile()));
+					song.open(AudioSystem.getAudioInputStream(new File(queue.pollFirst().getSongFilePath()).getAbsoluteFile()));
 					song.start();
 					active = true;
 				}
@@ -75,10 +74,19 @@ public class MusicPlayer {
 	/**
 	 * Stops the Clip.
 	 */
-	public void stop() {
+	public void stop() {		
 		song.stop();
 		song.setMicrosecondPosition(0);
 		stopped = true;
+		active = false;
+	}
+	
+	/**
+	 * Terminate closes the songs "Clip object".
+	 */
+	public void terminate() {
+		song.close();
+		stopped = false;
 		active = false;
 	}
 
@@ -128,23 +136,12 @@ public class MusicPlayer {
 	 *            Takes an ItemSong as input and adds the song to queue
 	 */
 	public void addSongToQueue(ItemSong x) {
-		if (stopped == true) {
-			song.close();
-			active = false;
-			stopped = false;
-		}
-
-		// try {
-		// File file = new File(x.getSongFilePath()); //Create the File object that
-		// holds the path to the file
-		// songFile = AudioSystem.getAudioInputStream(file.getAbsoluteFile()); //Set the
-		// "private songFile" so it can be used later in the program. AudioSystem
-		// returns a AudioInputStream object
-		// }
-		// catch(Exception e) {
-		// System.out.println(e);
-		// }
-
+//		if (stopped == true) {
+//			song.close();
+//			active = false;
+//			stopped = false;
+//		}
+		
 		queue.add(x);
 	}
 
@@ -155,7 +152,6 @@ public class MusicPlayer {
 	 */
 	public void addSongFirstInQueue(ItemSong x) {
 		queue.addFirst(x);
-
 	}
 
 	/**
@@ -165,6 +161,7 @@ public class MusicPlayer {
 	public void nextSong() {
 		if (active)
 			stop();
+		
 		stopped = false;
 		play();
 	}
@@ -190,12 +187,37 @@ public class MusicPlayer {
 		return songFile;
 	}
 
-	public boolean isActive() {
-		return active;
-	}
-
 	public boolean isStopped() {
 		return stopped;
 	}
 	
+	public boolean isActive() {
+		return active;
+	}
+	
+	public static void main(String[] args) {
+		
+		MusicPlayer player = new MusicPlayer();
+		ItemSong one = new ItemSong("Avicii", "Levels", "Avicii-Levels.wav", 01.08);
+		ItemSong two = new ItemSong("Ed Sheeran", "Perfect","EdSheeran-Perfect.wav", 01.08);
+		ItemSong three = new ItemSong("Marshmello", "FRIENDS", "Marshmello-FRIENDS.wav", 01.06);
+		
+		player.addSongFirstInQueue(one);
+		player.play();
+		
+		Scanner x = new Scanner(System.in);
+		x.nextLine();
+		
+		player.stop();
+		System.out.println(player.isActive());
+		
+		x.nextLine();
+		player.play();
+		
+		x.nextLine();
+		System.out.println(player.isActive());
+		x.nextLine();
+	}
+
 }
+	
