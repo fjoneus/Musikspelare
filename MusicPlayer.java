@@ -1,3 +1,5 @@
+
+
 /**
  * This music player can take in a file from an object. Extract the file name (source of the file), and find the file. 
  * The player hold all the necessary methods for play, pause and so on.
@@ -59,6 +61,7 @@ public class MusicPlayer {
 
 	public void resume() {
 		song.start();
+
 	}
 
 	/**
@@ -107,11 +110,10 @@ public class MusicPlayer {
 		return (int) song.getMicrosecondLength() / 1000000;
 	}
 
-	public String timeToString() {
+	public String timeToString(int secs) {
 		String time;
-		int length = getSongLength();
-		int min = (int) length / 60;
-		int sec = length % 60;
+		int min = (int) secs / 60;
+		int sec = secs % 60;
 		if (sec < 10)
 			time = min + ":" + "0" + sec;
 		else
@@ -151,20 +153,8 @@ public class MusicPlayer {
 	 *            Takes an ItemSong and adds the song first in the queue.
 	 */
 	public void addSongFirstInQueue(ItemSong x) {
-
-		// If a song has been stopped we have to set the label stopped to false,
-		// otherwise the play function will play both the
-		stopped = false;
-
 		queue.addFirst(x);
 
-		// If a song is playing and we whant to play a new one, close it and start the
-		// new one.
-		if (active == true) {
-			stop();
-			stopped = false;
-		}
-		play();
 	}
 
 	/**
@@ -172,9 +162,23 @@ public class MusicPlayer {
 	 * next in song queue
 	 */
 	public void nextSong() {
-		stop();
+		if (active)
+			stop();
 		stopped = false;
 		play();
+	}
+
+	public void setVolume(double vol) {
+		if (active && !stopped) {
+			if (vol < 0)
+				vol = 0;
+			else if (vol > 100)
+				vol = 100;
+			FloatControl volume = (FloatControl) song.getControl(FloatControl.Type.MASTER_GAIN);
+			float dB = (float) (Math.log(vol / 100) / Math.log(10.0) * 20.0);
+			volume.setValue(dB);
+		}
+
 	}
 
 	public ArrayDeque<ItemSong> getQueue() {
@@ -185,32 +189,12 @@ public class MusicPlayer {
 		return songFile;
 	}
 
-	// public static void main(String[] args) {
-	//
-	// Scanner scanner = new Scanner(System.in);
-	//
-	// //Add song and play
-	// MusicPlayer test = new MusicPlayer();
-	// test.addSongToQueue("Avicii-AddictedToYou.wav");
-	// test.addSongToQueue("Avicii-HeyBrother.wav");
-	// test.play();
-	//
-	//
-	// scanner.next();
-	// test.play();
-	//
-	// scanner.next();
-	// test.pause();
-	//
-	// scanner.next();
-	// test.resume();
-	//
-	// scanner.next();
-	// test.nextSong();
-	//
-	// //Keep the main alive
-	// scanner.next();
-	// scanner.close();
-	//
-	// }
+	public boolean isActive() {
+		return active;
+	}
+
+	public boolean isStopped() {
+		return stopped;
+	}
+	
 }
