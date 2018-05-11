@@ -270,6 +270,7 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 		if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
 			playThisSong = searchBar.getText();
 			System.out.println(playThisSong);
+			try {
 			ArrayList<ItemSong> list = hash.find(playThisSong);
 			artistresults = new String[list.size()];
 			for (int i = 0; i < list.size(); i++) {
@@ -278,6 +279,9 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 			results.setModel(new MyModel(artistresults));
 			playThisSong = "Enter Song or Artist";
 			searchBar.setText(playThisSong);
+			} catch (Exception e) {
+				currentSong.setText("Could Not Find Song/Artist");
+			}
 		}
 	}
 
@@ -315,7 +319,7 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 	}
 
 	private void randomActionPerformed(java.awt.event.ActionEvent evt) {
-		int x = (int) (Math.random() * (randomarray.length - 1));
+		int x = (int) (Math.random() * (randomarray.length));
 		ArrayList<ItemSong> templist = hash.find(randomarray[x]);
 		player.addSongFirstInQueue(((ItemSong) templist.get(0)));
 		next();
@@ -325,6 +329,7 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 	private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		playThisSong = searchBar.getText();
 		System.out.println(playThisSong);
+		try {
 		ArrayList<ItemSong> list = hash.find(playThisSong);
 		artistresults = new String[list.size()];
 		for (int i = 0; i < list.size(); i++) {
@@ -333,6 +338,9 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 		results.setModel(new MyModel(artistresults));
 		playThisSong = "Enter Song or Artist";
 		searchBar.setText(playThisSong);
+		} catch (Exception e) {
+			currentSong.setText("Could Not Find Song/Artist");
+		}
 
 	}
 
