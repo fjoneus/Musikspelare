@@ -69,6 +69,7 @@ public class MusicPlayer {
 	 */
 	public void pause() {
 		song.stop();
+		stopped = true;
 	}
 
 	/**
