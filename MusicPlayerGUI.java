@@ -367,7 +367,7 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 	private void playActionPerformed(java.awt.event.ActionEvent evt) {
 		playThisSong = "Enter Song or Artist";
 		searchBar.setText(playThisSong);
-		player.resume();
+		player.play();
 		System.out.println("PLAY");
 
 	}
