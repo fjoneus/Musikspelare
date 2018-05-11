@@ -59,7 +59,6 @@ public class MusicPlayer {
 
 	public void resume() {
 		song.start();
-
 	}
 
 	/**
@@ -78,6 +77,20 @@ public class MusicPlayer {
 		song.setMicrosecondPosition(0);
 		stopped = true;
 		active = false;
+	
+	}
+	
+	
+	/**
+	 * Stops the song, and plays it. This will trigger the play method to get the
+	 * next in song queue
+	 */
+	public void nextSong() {
+		if (active)
+			stop();
+		
+		stopped = false; //Overwrite the stop(); method that sets stop to true. This is so the play method dosen't resume instead of playing next song in queue.   
+		play();
 	}
 	
 	/**
@@ -99,6 +112,7 @@ public class MusicPlayer {
 		song.stop();
 		long currentPos = (long) x * 1000000;
 		song.setMicrosecondPosition(currentPos);
+		if(!isStopped())
 		resume();
 	}
 
@@ -134,13 +148,7 @@ public class MusicPlayer {
 	 * @param x
 	 *            Takes an ItemSong as input and adds the song to queue
 	 */
-	public void addSongToQueue(ItemSong x) {
-//		if (stopped == true) {
-//			song.close();
-//			active = false;
-//			stopped = false;
-//		}
-		
+	public void addSongToQueue(ItemSong x) {		
 		queue.add(x);
 	}
 
@@ -153,17 +161,6 @@ public class MusicPlayer {
 		queue.addFirst(x);
 	}
 
-	/**
-	 * Stops the song, and plays it. This will trigger the play method to get the
-	 * next in song queue
-	 */
-	public void nextSong() {
-		if (active)
-			stop();
-		
-		stopped = false;
-		play();
-	}
 
 	public void setVolume(double vol) {
 		if (active && !stopped) {
@@ -192,30 +189,6 @@ public class MusicPlayer {
 	
 	public boolean isActive() {
 		return active;
-	}
-	
-	public static void main(String[] args) {
-		
-		MusicPlayer player = new MusicPlayer();
-		ItemSong one = new ItemSong("Avicii", "Levels", "Avicii-Levels.wav", 01.08);
-		ItemSong two = new ItemSong("Ed Sheeran", "Perfect","EdSheeran-Perfect.wav", 01.08);
-		ItemSong three = new ItemSong("Marshmello", "FRIENDS", "Marshmello-FRIENDS.wav", 01.06);
-		
-		player.addSongFirstInQueue(one);
-		player.play();
-		
-		Scanner x = new Scanner(System.in);
-		x.nextLine();
-		
-		player.stop();
-		System.out.println(player.isActive());
-		
-		x.nextLine();
-		player.play();
-		
-		x.nextLine();
-		System.out.println(player.isActive());
-		x.nextLine();
 	}
 
 }
