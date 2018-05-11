@@ -408,6 +408,9 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 
 		});
 		progressTimer.start();
+		if(player.isActive())
+			player.terminate();
+		
 		player.nextSong();
 		currentSong.setText(player.getCurrentSong().toString());
 		songLength.setText(player.timeToString(player.getSongLength()));
