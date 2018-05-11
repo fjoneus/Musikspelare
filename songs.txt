@@ -1,0 +1,20 @@
+Avicii	Addicted To You	Avicii-AddictedToYou.wav	01.12
+Avicii	Hey Brother	Avicii-HeyBrother.wav	01.33
+Avicii	Levels	Avicii-Levels.wav	01.08
+Avicii	Seek Bromance	Avicii-SeekBromance.wav	01.11
+Avicii	Talk To Myself	Avicii-TalkToMyself.wav	01.28
+Avicii	Wake Me Up	Avicii-WakeMeUp.wav	01.07
+Avicii	Without You	Avicii-WithoutYou.wav	01.15
+Calvin Harris	One Kiss	CalvinHarris-OneKiss.wav	01.09
+Charlie Puth	The Way I Am	CharliePuth-TheWayIAm.wav	00.53
+Ed Sheeran	Perfect	EdSheeran-Perfect.wav	01.08
+Drake	Nice For What	Drake-NiceForWhat.wav	00.57
+Marshmello	FRIENDS	Marshmello-FRIENDS.wav	01.06
+Eminem	River	Eminem-River.wav	01.10
+Eminem	Till I Collapse	Eminem-TillICollapse.wav	01.28
+Eminem	Lose Yourself	Eminem-LoseYourself.wav	01.23
+Shawn Mendes	Lost In Japan	ShawnMendes-LostInJapan.wav	01.15
+Khalid Normani	Love Lies	KhalidNormani-LoveLies.wav	01.25
+Justin Bieber	Friends	JustinBieber-Friends.wav	01.31
+Callum McBride	Almost Home	CallumMcBride-AlmostHome.wav	01.43
+J.Cole	ATM	J.Cole-ATM.wav	04.41
