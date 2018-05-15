@@ -12,8 +12,6 @@ import java.io.*;
 
 import javax.sound.sampled.*;
 
-import org.junit.jupiter.api.Test;
-
 public class MusicPlayer {
 
 	private ItemSong songFile;
@@ -23,8 +21,7 @@ public class MusicPlayer {
 	private boolean active = false;
 
 	/**
-	 * Creates a MusicPlayer object that can be used to play .wav music files. In the MusicPlayer class there are methods to be used for play, 
-	 * pause, resume, stop and more. Note that this MusicPLayer uses an object called ItemSong that needs to hold the path to the .wav file.
+	 * Creates a MusicPlayer object that can be used to play .wav music files. Note that this MusicPLayer uses an object called ItemSong that needs to hold the path to the .wav file.
 	 * It can easily be modified to be used with other objects as long as it holds the information of the song file path. 
 	 * The MusicPlayer needs a GUI or some sort of main program that runs all the time, otherwise the MusicPLayer will stop when the main program has finished.
 	 */
@@ -92,7 +89,7 @@ public class MusicPlayer {
 	
 	
 	/**
-	 * Stops the song if one is active and plays the next, This will trigger the play method to get the
+	 * Stops the song if one is active and plays the next, this will trigger the play method to get the
 	 * next song in queue.
 	 */
 	public void nextSong() {
@@ -142,7 +139,7 @@ public class MusicPlayer {
 	/**
 	 * 
 	 * @param secs converts the value to time in seconds and minutes.
-	 * @return the conversion as a String if format min : sec. Note, if the seconds ar less then
+	 * @return the conversion as a String in format min : sec. Note, if the seconds  less then
 	 * 10 it will add a zero in front of the seconds.
 	 */
 	public String timeToString(int secs) {
