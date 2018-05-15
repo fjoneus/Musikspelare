@@ -1,10 +1,11 @@
 
 
+package Proj6;
+
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
@@ -265,11 +266,13 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 		playThisSong = "Enter Song or Artist";
 
 	}
-
+	/**
+     * Listener for the "Enter button", displays either the song or the artist's songs searched for
+     * if no song/artist is found a catch prints "could not find..." as results.
+     */
 	private void searchBarKeyPressed(java.awt.event.KeyEvent evt) {
 		if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
 			playThisSong = searchBar.getText();
-			System.out.println(playThisSong);
 			try {
 			ArrayList<ItemSong> list = hash.find(playThisSong);
 			artistresults = new String[list.size()];
@@ -280,16 +283,26 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 			playThisSong = "Enter Song or Artist";
 			searchBar.setText(playThisSong);
 			} catch (Exception e) {
-				currentSong.setText("Could Not Find Song/Artist");
+				artistresults = new String[1];
+				artistresults[0] = "Couldnt Find Song/Artist";
+				results.setModel(new MyModel(artistresults));
 			}
 		}
 	}
-
+    /**
+     * Listener for the stop button, simply calls for musicplayers stop() method.
+     * @param evt
+     */
 	private void stopActionPerformed(java.awt.event.ActionEvent evt) {
-		System.out.println("STOP");
 		player.stop();
+		play.setText("PLAY");
 	}
-
+    /**
+     * This listener waits for inputs in the JScrollPane, if we double-click an object in the resultpane
+     * the corresponding song is added first in queue and played, however if we right-click a focused object it's
+     * added last in the queue.
+     * @param evt
+     */
 	private void resultsMouseClicked(java.awt.event.MouseEvent evt) {
 		int x = results.getSelectedIndex();
 		ArrayList<ItemSong> templist = hash.find(artistresults[x]);
@@ -308,27 +321,35 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 				queueresults[cc++] = itr.next().toString();
 			}
 			queue.setModel(new MyModel(queueresults));
-
-			System.out.println(x + " added in queue");
 		}
 	}
-
+    /**
+     * Listener for the Next button, simply calls for the method next()
+     * @param evt
+     */
 	private void nextActionPerformed(java.awt.event.ActionEvent evt) {
-		System.out.println("NEXT");
+		play.setText("PLAY");
 		next();
 	}
-
+    /**
+     * Listener for the "random button" which uses Math.random() to get the String that represent a random song
+     * then adds it first in queue and calls the method next() to play it.
+     * @param evt
+     */
 	private void randomActionPerformed(java.awt.event.ActionEvent evt) {
 		int x = (int) (Math.random() * (randomarray.length));
 		ArrayList<ItemSong> templist = hash.find(randomarray[x]);
 		player.addSongFirstInQueue(((ItemSong) templist.get(0)));
+		play.setText("PLAY");
 		next();
 
 	}
-
+	/**
+     * Listener for the search button, displays either the song or the artist's songs searched for
+     * if no song/artist is found a catch prints "could not find..." as results.
+     */
 	private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		playThisSong = searchBar.getText();
-		System.out.println(playThisSong);
 		try {
 		ArrayList<ItemSong> list = hash.find(playThisSong);
 		artistresults = new String[list.size()];
@@ -339,11 +360,16 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 		playThisSong = "Enter Song or Artist";
 		searchBar.setText(playThisSong);
 		} catch (Exception e) {
-			currentSong.setText("Could Not Find Song/Artist");
+			artistresults = new String[1];
+			artistresults[0] = "Couldnt Find Song/Artist";
+			results.setModel(new MyModel(artistresults));
 		}
 
 	}
-
+	/**
+     * Listener for the toggle button "show queue" 
+     * depending on the state it shows respectively hides the JScrollBar showing songs in queue
+     */
 	private void showQueueButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		if (showQueueButton.isSelected()) {
 			showQueueButton.setText("Hide Queue");
@@ -371,20 +397,27 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 	private void searchBarMouseEntered(java.awt.event.MouseEvent evt) {
 		searchBar.setText(playThisSong);
 	}
-
+	/**
+     * Listener for play button, Calls Musicplayer's method play()
+     */
 	private void playActionPerformed(java.awt.event.ActionEvent evt) {
 		playThisSong = "Enter Song or Artist";
 		searchBar.setText(playThisSong);
 		player.play();
-		System.out.println("PLAY");
+		play.setText("PLAY");
 
 	}
-
+    /**
+     * Listener for pause button, calls for Musicplayer's method pause()
+     */
 	private void pauseActionPerformed(java.awt.event.ActionEvent evt) {
-		System.out.println("PAUSE");
 		player.pause();
+		play.setText("RESUME");
 	}
-
+    /**
+     * Listener for the timeline, if the value is changed calls for Musicplayers method setTime()
+     * @param evt
+     */
 	private void timelineStateChanged(javax.swing.event.ChangeEvent evt) {
 		if (ignoreEvents) {
 			return;
@@ -420,6 +453,7 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 			player.terminate();
 		
 		player.nextSong();
+		play.setText("PLAY");
 		currentSong.setText(player.getCurrentSong().toString());
 		songLength.setText(player.timeToString(player.getSongLength()));
 		timeline.setMaximum(player.getSongLength());
@@ -507,3 +541,4 @@ public class MusicPlayerGUI extends javax.swing.JFrame {
 	private static HashTable hash;
 	private MusicPlayer player;
 }
+
